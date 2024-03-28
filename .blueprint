@@ -1,0 +1,19 @@
+created:
+    - database/factories/CenterCodeFactory.php
+    - database/factories/InsuranceFactory.php
+    - database/factories/ProductsFactory.php
+    - database/factories/FormInputFactory.php
+    - database/migrations/2024_03_28_212232_create_center_codes_table.php
+    - database/migrations/2024_03_28_212233_create_insurances_table.php
+    - database/migrations/2024_03_28_212234_create_products_table.php
+    - database/migrations/2024_03_28_212235_create_form_inputs_table.php
+    - app/Models/CenterCode.php
+    - app/Models/Insurance.php
+    - app/Models/Products.php
+    - app/Models/FormInput.php
+models:
+    User: { name: string, email: string, email_verified_at: 'timestamp nullable default:NULL', password: string, remember_token: 'string:100 nullable default:NULL' }
+    CenterCode: { code: 'string:20', relationships: { hasMany: FormInput } }
+    Insurance: { insurance: 'string:100', relationships: { hasMany: FormInput } }
+    Products: { products: 'string:50', relationships: { hasMany: FormInput } }
+    FormInput: { patient_phone: 'string:15', secondary_phone: 'string:15 nullable', first_name: 'string:15', last_name: 'string:15', dob: date, medicare_id: 'string:15 unique', address: text, city: 'string:15', state: 'string:15', zip: 'string:15', product_specs: text, doctor_name: 'string:30', facility_name: 'string:20', patient_last_visit: 'string:20', doctor_address: 'text nullable', doctor_phone: 'string:15', doctor_fax: 'string:20', doctor_npi: 'string:50', recording_link: text, comments: text, status: 'string:10 nullable', relationships: { belongsTo: 'CenterCode, Insurance, Products, Users' } }
