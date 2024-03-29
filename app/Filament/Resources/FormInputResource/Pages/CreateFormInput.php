@@ -4,6 +4,7 @@ namespace App\Filament\Resources\FormInputResource\Pages;
 
 use App\Filament\Resources\FormInputResource;
 use Filament\Actions;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateFormInput extends CreateRecord
@@ -14,4 +15,5 @@ class CreateFormInput extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
+    
 }

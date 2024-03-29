@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
@@ -111,6 +112,22 @@ class FormInputResource extends Resource
                 $query->where('users_id', $id);
             })
             ->columns([
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge('status')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('centerCode.code')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('insurance.insurance')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('products.products')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('patient_phone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('secondary_phone')
@@ -142,28 +159,9 @@ class FormInputResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('doctor_npi')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('centerCode.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('insurance.id')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('products.id')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('users.name')
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -192,5 +190,18 @@ class FormInputResource extends Resource
             'create' => Pages\CreateFormInput::route('/create'),
             'edit' => Pages\EditFormInput::route('/{record}/edit'),
         ];
+    }
+    public static function getStatusCode($status) : string
+    {
+        switch($status){
+            case 'test':
+                return 'danger';
+            default:
+                return '';
+        }
+    }
+    public static function canEdit(Model $record): bool
+    {
+        return false;   
     }
 }
