@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\InputStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,6 +55,7 @@ class FormInput extends Model
         'insurance_id' => 'integer',
         'products_id' => 'integer',
         'users_id' => 'integer',
+        'status' => InputStatus::class
     ];
 
     public function centerCode(): BelongsTo

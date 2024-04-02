@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -158,13 +159,18 @@ class FormInputResource extends Resource
                 Tables\Columns\TextColumn::make('doctor_fax')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('doctor_npi')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('users.name')
-                    ->numeric()
-                    ->sortable()
+                    ->searchable()
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        'denied' => 'Denied',
+                        'error' => 'Error',
+                        'payable' => 'Payable',
+                        'approved' => 'Approved',
+                        'wrong doc' => 'Wrong doc',
+                        'paid' => 'Paid',
+                    ])
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -191,9 +197,9 @@ class FormInputResource extends Resource
             'edit' => Pages\EditFormInput::route('/{record}/edit'),
         ];
     }
-    public static function getStatusCode($status) : string
+    public static function getStatusCode($status): string
     {
-        switch($status){
+        switch ($status) {
             case 'test':
                 return 'danger';
             default:
@@ -202,6 +208,6 @@ class FormInputResource extends Resource
     }
     public static function canEdit(Model $record): bool
     {
-        return false;   
+        return false;
     }
 }
