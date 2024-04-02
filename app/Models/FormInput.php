@@ -41,7 +41,6 @@ class FormInput extends Model
         'center_code_id',
         'insurance_id',
         'products_id',
-        'users_id',
     ];
 
     /**
@@ -55,8 +54,8 @@ class FormInput extends Model
         'center_code_id' => 'integer',
         'insurance_id' => 'integer',
         'products_id' => 'integer',
-        'users_id' => 'integer',
-        'status' => InputStatus::class
+        'status' => InputStatus::class,
+        'transfer_status' => InputStatus::class
     ];
 
     public function centerCode(): BelongsTo

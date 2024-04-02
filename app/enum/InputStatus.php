@@ -13,6 +13,8 @@ enum InputStatus: string implements HasLabel, HasColor
     case APPROVED = 'approved';
     case WRONG_DOC = 'wrong doc';
     case PAID = 'paid';
+    case TRANSFERED = 'transfered';
+    case NOT_TRANSFERED = 'not transfered';
 
     public function getLabel(): ?string
     {
@@ -23,6 +25,8 @@ enum InputStatus: string implements HasLabel, HasColor
             self::APPROVED => 'approved',
             self::WRONG_DOC => 'wrong doc',
             self::PAID => 'paid',
+            self::TRANSFERED => 'transfered',
+            self::NOT_TRANSFERED => 'not transfered',
         };
     }
     public function getColor(): string|array|null
@@ -34,6 +38,8 @@ enum InputStatus: string implements HasLabel, HasColor
             self::APPROVED => 'success',
             self::WRONG_DOC => 'pink',
             self::PAID => 'cyan',
+            self::TRANSFERED => 'primary',
+            self::NOT_TRANSFERED => 'danger',
         };
     }
 }

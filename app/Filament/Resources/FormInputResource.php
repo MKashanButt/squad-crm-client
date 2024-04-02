@@ -111,10 +111,6 @@ class FormInputResource extends Resource
                 Forms\Components\Textarea::make('comments')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('user_id')
-                    ->default('')
-                    ->readOnly()
-                    ->required(),
             ]);
     }
 
@@ -126,7 +122,7 @@ class FormInputResource extends Resource
                 $center_code_id = CenterCode::where('code', $name)->first();
                 if ($center_code_id) {
                     $id = $center_code_id->id;
-                    $query->where('center_code_id', 1);
+                    $query->where('center_code_id', $id);
                 }
             })
             ->columns([
@@ -180,8 +176,6 @@ class FormInputResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('doctor_npi')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user')
-                    ->searchable()
             ])
             ->filters([
                 SelectFilter::make('status')
