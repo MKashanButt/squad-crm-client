@@ -6,6 +6,7 @@ use App\Enum\InputStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 
 class FormInput extends Model
 {
@@ -76,5 +77,13 @@ class FormInput extends Model
     public function users(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public static function getUser()
+    {
+        $userId = Auth::id();
+        $query = User::query();
+        $user = $query->where('user_id', $userId);
+        return $user;
     }
 }

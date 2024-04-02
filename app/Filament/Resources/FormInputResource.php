@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FormInputResource\Pages;
 use App\Filament\Resources\FormInputResource\RelationManagers;
+use App\Models\CenterCode;
 use App\Models\FormInput;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -20,6 +22,13 @@ class FormInputResource extends Resource
 {
     protected static ?string $model = FormInput::class;
 
+    public function getUser()
+    {
+        $userId = Auth::id();
+        $query = User::query();
+        $user = $query->where('user_id', $userId);
+        return $user;
+    }
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -39,10 +48,13 @@ class FormInputResource extends Resource
                     ->relationship('products', 'products')
                     ->required(),
                 Forms\Components\TextInput::make('patient_phone')
+                    ->prefix("+1")
                     ->tel()
-                    ->required()
-                    ->maxLength(15),
+                    ->length(10)
+                    ->maxLength(15)
+                    ->required(),
                 Forms\Components\TextInput::make('secondary_phone')
+                    ->prefix("+1")
                     ->tel()
                     ->maxLength(15)
                     ->default(null),
@@ -99,8 +111,9 @@ class FormInputResource extends Resource
                 Forms\Components\Textarea::make('comments')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Select::make('users_id')
-                    ->relationship('users', 'name')
+                Forms\Components\TextInput::make('user_id')
+                    ->default('')
+                    ->readOnly()
                     ->required(),
             ]);
     }
@@ -109,8 +122,12 @@ class FormInputResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $id = Auth::id();
-                $query->where('users_id', $id);
+                $name = Auth::user()->name;
+                $center_code_id = CenterCode::where('code', $name)->first();
+                if ($center_code_id) {
+                    $id = $center_code_id->id;
+                    $query->where('center_code_id', 1);
+                }
             })
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
@@ -118,6 +135,9 @@ class FormInputResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('status')
+                    ->badge('status')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('transfer_status')
                     ->badge('status')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('centerCode.code')
@@ -159,6 +179,8 @@ class FormInputResource extends Resource
                 Tables\Columns\TextColumn::make('doctor_fax')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('doctor_npi')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user')
                     ->searchable()
             ])
             ->filters([
@@ -196,15 +218,6 @@ class FormInputResource extends Resource
             'create' => Pages\CreateFormInput::route('/create'),
             'edit' => Pages\EditFormInput::route('/{record}/edit'),
         ];
-    }
-    public static function getStatusCode($status): string
-    {
-        switch ($status) {
-            case 'test':
-                return 'danger';
-            default:
-                return '';
-        }
     }
     public static function canEdit(Model $record): bool
     {
