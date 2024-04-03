@@ -2,11 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\FormInputResource\Pages;
-use App\Filament\Resources\FormInputResource\RelationManagers;
-use App\Models\CenterCode;
-use App\Models\FormInput;
-use App\Models\User;
+use App\Filament\Resources\PaidLeadsResource\Pages;
+use App\Filament\Resources\PaidLeadsResource\RelationManagers;
+use App\Models\PaidLeads;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,13 +12,12 @@ use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
-class FormInputResource extends Resource
+class PaidLeadsResource extends Resource
 {
-    protected static ?string $model = FormInput::class;
+    protected static ?string $model = PaidLeads::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -28,6 +25,24 @@ class FormInputResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'Denied' => 'Denied',
+                        'Error' => 'Error',
+                        'Payable' => 'Payable',
+                        'Approved' => 'Approved',
+                        'Wrong Doc' => 'Wrong Doc',
+                        'Paid' => 'Paid',
+                        'Awaiting' => 'Awaiting'
+                    ])
+                    ->required(),
+                Forms\Components\Select::make('transfer_status')
+                    ->options([
+                        'Transferred' => 'Transferred',
+                        'Not transferred' => 'Not transferred',
+                        'Awaiting' => 'Awaiting'
+                    ])
+                    ->required(),
                 Forms\Components\Select::make('center_code_id')
                     ->relationship('centerCode', 'code')
                     ->searchable()
@@ -41,13 +56,10 @@ class FormInputResource extends Resource
                     ->relationship('products', 'products')
                     ->required(),
                 Forms\Components\TextInput::make('patient_phone')
-                    ->prefix("+1")
                     ->tel()
-                    ->length(10)
-                    ->maxLength(15)
-                    ->required(),
+                    ->required()
+                    ->maxLength(15),
                 Forms\Components\TextInput::make('secondary_phone')
-                    ->prefix("+1")
                     ->tel()
                     ->maxLength(15)
                     ->default(null),
@@ -60,10 +72,6 @@ class FormInputResource extends Resource
                 Forms\Components\DatePicker::make('dob')
                     ->required(),
                 Forms\Components\TextInput::make('medicare_id')
-                    ->unique()
-                    ->validationMessages([
-                        'unique' => 'The Medicare Id is already present'
-                    ])
                     ->required()
                     ->maxLength(15),
                 Forms\Components\Textarea::make('address')
@@ -115,19 +123,13 @@ class FormInputResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $name = Auth::user()->name;
-                $center_code_id = CenterCode::where('code', $name)->first();
-                if ($center_code_id) {
-                    $id = $center_code_id->id;
-                    $query->where('center_code_id', $id)
-                        ->orderBy('id', 'desc');
-                }
+                $query->where('status', 'Paid')
+                    ->orderBy('id', 'desc');
             })
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge('status')
                     ->searchable(),
@@ -173,21 +175,11 @@ class FormInputResource extends Resource
                 Tables\Columns\TextColumn::make('doctor_fax')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('doctor_npi')
-                    ->searchable(),
+                    ->searchable()
             ])
-            ->filters([
-                SelectFilter::make('status')
-                    ->options([
-                        'denied' => 'Denied',
-                        'error' => 'Error',
-                        'payable' => 'Payable',
-                        'approved' => 'Approved',
-                        'wrong doc' => 'Wrong doc',
-                        'paid' => 'Paid',
-                    ])
-            ])
+            ->filters([])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -206,11 +198,12 @@ class FormInputResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFormInputs::route('/'),
-            'create' => Pages\CreateFormInput::route('/create'),
-            'edit' => Pages\EditFormInput::route('/{record}/edit'),
+            'index' => Pages\ListPaidLeads::route('/'),
+            'create' => Pages\CreatePaidLeads::route('/create'),
+            'edit' => Pages\EditPaidLeads::route('/{record}/edit'),
         ];
     }
+
     public static function canEdit(Model $record): bool
     {
         return false;
