@@ -67,6 +67,10 @@ class FormInputResource extends Resource
                 Forms\Components\DatePicker::make('dob')
                     ->required(),
                 Forms\Components\TextInput::make('medicare_id')
+                    ->unique()
+                    ->validationMessages([
+                        'unique' => 'The Medicare Id is already present'
+                    ])
                     ->required()
                     ->maxLength(15),
                 Forms\Components\Textarea::make('address')
