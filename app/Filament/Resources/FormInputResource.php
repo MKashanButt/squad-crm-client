@@ -122,10 +122,11 @@ class FormInputResource extends Resource
                     $query->where('center_code_id', $id)
                         ->orderBy('id', 'desc');
                 }
+                $query->where('status', '!=', 'paid');
             })
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('status')
@@ -178,12 +179,12 @@ class FormInputResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->options([
-                        'denied' => 'Denied',
-                        'error' => 'Error',
-                        'payable' => 'Payable',
-                        'approved' => 'Approved',
-                        'wrong doc' => 'Wrong doc',
-                        'paid' => 'Paid',
+                        'Denied' => 'Denied',
+                        'Error' => 'Error',
+                        'Payable' => 'Payable',
+                        'Approved' => 'Approved',
+                        'Wrong doc' => 'Wrong doc',
+                        'Paid' => 'Paid',
                     ])
             ])
             ->actions([

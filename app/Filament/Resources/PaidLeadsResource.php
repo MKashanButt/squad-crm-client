@@ -27,13 +27,13 @@ class PaidLeadsResource extends Resource
             ->schema([
                 Forms\Components\Select::make('status')
                     ->options([
-                        'Denied' => 'Denied',
-                        'Error' => 'Error',
-                        'Payable' => 'Payable',
-                        'Approved' => 'Approved',
-                        'Wrong Doc' => 'Wrong Doc',
-                        'Paid' => 'Paid',
-                        'Awaiting' => 'Awaiting'
+                        'denied' => 'Denied',
+                        'error' => 'Error',
+                        'payable' => 'Payable',
+                        'approved' => 'Approved',
+                        'wrong doc' => 'Wrong Doc',
+                        'paid' => 'Paid',
+                        'awaiting' => 'Awaiting'
                     ])
                     ->required(),
                 Forms\Components\Select::make('transfer_status')
